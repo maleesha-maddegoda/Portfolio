@@ -1,301 +1,308 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, ArrowRight, MessageSquare, CheckCircle2, Copy, Check } from "lucide-react";
-import { LinkedInIcon, GitHubIcon } from "./icons";
-import { SectionReveal } from "./section-reveal";
-import { personalInfo } from "@/data/personal";
+import { motion } from "framer-motion";
+import { personalInfo } from "@/data/portfolio";
+import AlienPursuit from "@/components/AlienPursuit";
 
-export function Contact() {
+const rowClass =
+  "flex items-center justify-between gap-4 py-3.5 border-b border-[rgba(183,255,69,0.2)] font-mono text-sm text-[#F5F8F4] transition-all duration-200 hover:pl-2 hover:text-[#B7FF45]";
+const rowValue = "min-w-0 font-mono text-xs text-[#AAB6AA] truncate";
+
+const inputClass =
+  "w-full bg-[#0C130F] border border-[rgba(183,255,69,0.25)] px-4 py-3.5 text-sm font-mono text-[#F5F8F4] placeholder-[#778379] outline-none transition-all duration-200 focus:border-[#B7FF45] focus:shadow-[0_0_15px_rgba(183,255,69,0.2)]";
+const labelClass = "grid gap-1.5 font-mono text-xs text-[#AAB6AA] uppercase tracking-wider";
+
+const displayUrl = (url: string) => url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+
+export default function Contact() {
   const [copied, setCopied] = useState(false);
+  const [formState, setFormState] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState<"idle" | "sending" | "success">("idle");
 
-  const handleCopyEmail = (e: React.MouseEvent) => {
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(personalInfo.email);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = personalInfo.email;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormState({ ...formState, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    e.stopPropagation();
-    if (personalInfo.email) {
-      navigator.clipboard.writeText(personalInfo.email);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2200);
+    if (!formState.name || !formState.email || !formState.message) return;
+    setStatus("sending");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
+        }),
+      });
+
+      if (response.ok) {
+        setStatus("success");
+        setFormState({ name: "", email: "", message: "" });
+        setTimeout(() => setStatus("idle"), 3000);
+      } else {
+        console.error("Form submission failed");
+        setStatus("idle");
+        alert("Transmission error. Please try again or reach out directly via email.");
+      }
+    } catch (error) {
+      console.error("Error submitting form", error);
+      setStatus("idle");
+      alert("Network transmission error. Please try again later.");
     }
   };
 
   return (
-    <section
-      id="contact"
-      aria-labelledby="contact-heading"
-      className="relative section-py overflow-hidden bg-transparent"
-    >
-      {/* Background radial glow */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 50% at 50% 100%, rgba(0, 240, 255, 0.04) 0%, rgba(168, 85, 247, 0.02) 45%, transparent 70%)",
-        }}
-      />
+    <div id="contact" className="flex flex-col bg-[#050806] text-[#F5F8F4] relative">
+      <section className="relative w-full flex-1 flex flex-col justify-center pt-[120px] pb-[130px] overflow-hidden">
 
-      <div className="section-container relative z-10">
-        {/* Header */}
-        <SectionReveal className="section-header-block">
-          <div className="section-eyebrow">
-            <span className="section-eyebrow-number">07</span>
-            <span className="section-eyebrow-slash">/</span>
-            <span className="section-eyebrow-label">Contact</span>
-          </div>
-          <h2 id="contact-heading" className="section-title">
-            Let&apos;s Connect &amp;{" "}
-            <span className="gradient-text">Collaborate</span>
-          </h2>
-          <div className="section-accent-line" aria-hidden="true" />
-          <p className="section-subtitle">
-            Whether you are a recruiter, software engineer, researcher, or fellow student,
-            I am always eager to discuss new ideas, projects, and opportunities.
-          </p>
-        </SectionReveal>
+        {/* Ambient green spacecraft atmosphere glow */}
+        <div
+          className="absolute -right-[250px] -bottom-[250px] w-[700px] h-[700px] rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(183,255,69,0.12), transparent 70%)" }}
+        />
 
-        {/* 2-Column Content Grid */}
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+        <div className="wrap relative z-10">
 
-          {/* Left Column: Contact Cards (6 cols) */}
-          <div className="lg:col-span-6 flex flex-col gap-5">
-            <SectionReveal delay={0.1}>
-              <h3
-                className="font-mono font-semibold text-xs uppercase tracking-wider mb-2"
-                style={{ color: "var(--color-text-muted)" }}
-              >
-                Direct Communication Channels
-              </h3>
-            </SectionReveal>
+          {/* Header */}
+          <motion.div
+            className="mb-14"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-1.5 h-1.5 bg-[#B7FF45] shadow-[0_0_8px_#B7FF45]" />
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-[#B7FF45]">
+                TRANSMISSION_FREQUENCY::OPEN
+              </span>
+              <span className="h-px w-12 bg-[#B7FF45]/30 ml-2" />
+            </div>
 
-            {/* LinkedIn Card */}
-            <SectionReveal delay={0.15}>
-              <a
-                href={personalInfo.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="card-box flex items-center justify-between gap-3 sm:gap-4 p-4 sm:p-5 group w-full min-w-0"
-                style={{ textDecoration: "none" }}
-                aria-label="Connect with Maleesha on LinkedIn (opens in new tab)"
-              >
-                <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-                  <div
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105"
-                    style={{
-                      background: "var(--color-accent-dim)",
-                      border: "1px solid var(--color-border-strong)",
-                      color: "var(--color-accent)",
-                    }}
-                    aria-hidden="true"
-                  >
-                    <LinkedInIcon size={20} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <span className="text-[11px] sm:text-xs uppercase tracking-wider font-mono font-semibold text-[var(--color-text-muted)] block mb-0.5 truncate">
-                      Professional Network
-                    </span>
-                    <h4 className="font-sans font-bold text-sm sm:text-base text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors truncate">
-                      {personalInfo.name} on LinkedIn
-                    </h4>
-                    <span className="text-[11px] sm:text-xs text-[var(--color-accent)] block truncate">
-                      Primary Contact Channel · Active
-                    </span>
-                  </div>
-                </div>
-                <ArrowRight
-                  size={18}
-                  className="text-[var(--color-accent)] opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0"
-                  aria-hidden="true"
-                />
-              </a>
-            </SectionReveal>
+            <h2 className="font-heading text-[clamp(2.4rem,6.5vw,5rem)] leading-[0.92] tracking-[-0.04em] font-extrabold uppercase mb-4">
+              LET&apos;S BUILD SOMETHING{" "}
+              <span className="text-[#B7FF45] block sm:inline">FROM THE FUTURE.</span>
+            </h2>
 
-            {/* GitHub Card */}
-            <SectionReveal delay={0.2}>
-              <a
-                href="https://github.com/maleesha-maddegoda"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="card-box flex items-center justify-between gap-3 sm:gap-4 p-4 sm:p-5 group w-full min-w-0"
-                style={{ textDecoration: "none" }}
-                aria-label="View Maleesha's GitHub Profile (opens in new tab)"
-              >
-                <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-                  <div
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105"
-                    style={{
-                      background: "var(--color-bg-pill)",
-                      border: "1px solid var(--color-border-subtle)",
-                      color: "var(--color-text-primary)",
-                    }}
-                    aria-hidden="true"
-                  >
-                    <GitHubIcon size={20} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <span className="text-[11px] sm:text-xs uppercase tracking-wider font-mono font-semibold text-[var(--color-text-muted)] block mb-0.5 truncate">
-                      Code Repositories
-                    </span>
-                    <h4 className="font-sans font-bold text-sm sm:text-base text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors truncate">
-                      github.com/maleesha-maddegoda
-                    </h4>
-                    <span className="text-[11px] sm:text-xs text-[var(--color-text-muted)] block truncate">
-                      Open-Source Projects &amp; Lab Work
-                    </span>
-                  </div>
-                </div>
-                <ArrowRight
-                  size={18}
-                  className="text-[var(--color-text-muted)] group-hover:text-[var(--color-accent)] group-hover:translate-x-1 transition-all shrink-0"
-                  aria-hidden="true"
-                />
-              </a>
-            </SectionReveal>
+            <p className="font-mono text-sm text-[#AAB6AA] max-w-xl">
+              Open communication channel. Transmit your message, proposal, or inquiry directly into the terminal console.
+            </p>
+          </motion.div>
 
-            {/* Direct Email Card */}
-            <SectionReveal delay={0.25}>
-              <a
-                href={personalInfo.gmailComposeUrl || `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(personalInfo.email)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="card-box flex items-center justify-between gap-3 sm:gap-4 p-4 sm:p-5 group w-full min-w-0"
-                style={{ textDecoration: "none" }}
-                aria-label={`Open Gmail to compose email to ${personalInfo.email} (opens in new tab)`}
-              >
-                <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-                  <div
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105"
-                    style={{
-                      background: "var(--color-accent-dim)",
-                      border: "1px solid var(--color-border-strong)",
-                      color: "var(--color-accent)",
-                    }}
-                    aria-hidden="true"
-                  >
-                    <Mail size={20} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <span className="text-[11px] sm:text-xs uppercase tracking-wider font-mono font-semibold text-[var(--color-text-muted)] block mb-0.5 truncate">
-                      Direct Email · Gmail
-                    </span>
-                    <h4 className="font-sans font-bold text-xs sm:text-base text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors truncate">
-                      {personalInfo.email}
-                    </h4>
-                    <span className="text-[11px] sm:text-xs text-[var(--color-accent)] block truncate">
-                      Click to open Gmail &amp; compose
-                    </span>
-                  </div>
-                </div>
+          <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-2 gap-12 lg:gap-x-16 items-start">
 
-                <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                  <button
-                    type="button"
-                    onClick={handleCopyEmail}
-                    className="px-2 sm:px-2.5 py-1.5 rounded-lg text-xs font-mono font-medium flex items-center gap-1 sm:gap-1.5 transition-all cursor-pointer"
-                    style={{
-                      background: copied ? "var(--color-accent)" : "var(--color-bg-pill)",
-                      border: "1px solid",
-                      borderColor: copied ? "var(--color-accent)" : "var(--color-border-subtle)",
-                      color: copied ? "#0A0F1C" : "var(--color-text-secondary)",
-                    }}
-                    title="Copy email to clipboard"
-                    aria-label="Copy email address"
-                  >
-                    {copied ? <Check size={12} className="stroke-[2.5]" /> : <Copy size={12} />}
-                    <span className="hidden sm:inline">{copied ? "Copied!" : "Copy"}</span>
-                  </button>
+            {/* Details & Links */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="bg-[#0C130F] p-8 border border-[rgba(183,255,69,0.2)] relative shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+            >
+              {/* Corner ticks */}
+              <div className="absolute top-1.5 left-1.5 w-2 h-2 border-t-2 border-l-2 border-[#B7FF45]" />
+              <div className="absolute top-1.5 right-1.5 w-2 h-2 border-t-2 border-r-2 border-[#B7FF45]" />
 
-                  <ArrowRight
-                    size={18}
-                    className="text-[var(--color-accent)] opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0"
-                    aria-hidden="true"
-                  />
-                </div>
-              </a>
-            </SectionReveal>
-          </div>
-
-          {/* Right Column: Collaboration & Opportunity Box (6 cols) */}
-          <div className="lg:col-span-6">
-            <SectionReveal delay={0.15}>
-              <div className="card-box p-5 sm:p-8 md:p-10 space-y-5 sm:space-y-6">
-                <div className="flex items-center gap-3.5 pb-5 border-b border-[var(--color-border)]">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{
-                      background: "var(--color-accent-dim)",
-                      border: "1px solid var(--color-border-strong)",
-                      color: "var(--color-accent)",
-                    }}
-                    aria-hidden="true"
-                  >
-                    <MessageSquare size={22} />
-                  </div>
-                  <div>
-                    <h3 className="font-sans font-bold text-xl text-[var(--color-text-primary)]">
-                      Open to Opportunities
-                    </h3>
-                    <p className="text-xs text-[var(--color-accent)] font-semibold font-mono">
-                      Undergraduate Internship &amp; Project Availability
-                    </p>
-                  </div>
-                </div>
-
-                <p className="text-sm md:text-base leading-relaxed text-[var(--color-text-secondary)] font-sans">
-                  I am actively seeking internship opportunities, research collaborations, and junior
-                  engineering engagements where I can apply my AI/ML knowledge and full-stack software
-                  development skills to meaningful, real-world problems.
-                </p>
-
-                {/* Checklist */}
-                <div className="space-y-3 pt-2">
-                  <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[var(--color-text-muted)] block mb-2">
-                    Areas of Collaboration:
-                  </span>
-                  {[
-                    "AI & Machine Learning Internships (Summer / Industrial Placement)",
-                    "Applied Computer Vision & NLP Research Projects",
-                    "Full-Stack Web & Backend Engineering Collaborations",
-                    "Technical Discussions, Hackathons & Open-Source Work",
-                  ].map((item) => (
-                    <div key={item} className="flex items-start gap-3">
-                      <CheckCircle2 size={16} className="text-[var(--color-accent)] flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-[var(--color-text-secondary)] font-sans">
-                        {item}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Direct Action Buttons */}
-                <div className="pt-4 flex flex-col sm:flex-row gap-3">
-                  <a
-                    href={personalInfo.gmailComposeUrl || `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(personalInfo.email)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-primary flex-1 justify-center text-center text-sm py-3.5"
-                    aria-label={`Open Gmail to compose email to ${personalInfo.email} (opens in new tab)`}
-                  >
-                    <Mail size={18} aria-hidden="true" />
-                    <span>Compose on Gmail</span>
-                  </a>
-                  <a
-                    href={personalInfo.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-secondary flex-1 justify-center text-center text-sm py-3.5"
-                    aria-label="Connect on LinkedIn (opens in new tab)"
-                  >
-                    <LinkedInIcon size={18} aria-hidden="true" />
-                    <span>LinkedIn Message</span>
-                  </a>
-                </div>
+              <div className="font-mono text-xs uppercase tracking-widest text-[#B7FF45] mb-4 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#B7FF45] animate-ping" />
+                <span>TERMINAL_TELEMETRY</span>
               </div>
-            </SectionReveal>
-          </div>
 
+              <p className="text-[#AAB6AA] text-sm leading-relaxed mb-4">
+                I am currently seeking internship roles in <strong className="text-[#F5F8F4]">Artificial Intelligence</strong>, <strong className="text-[#F5F8F4]">Machine Learning</strong>, and <strong className="text-[#F5F8F4]">Full-Stack Engineering</strong>.
+              </p>
+
+              <p className="text-[#AAB6AA] text-sm leading-relaxed mb-8">
+                Whether you have an opportunity, a technical collaboration, or want to discuss machine learning architectures — frequency channels are open.
+              </p>
+
+              <div className="border-t border-[rgba(183,255,69,0.2)]">
+                {/* Email */}
+                <button
+                  type="button"
+                  onClick={copyEmail}
+                  title="Copy email to clipboard"
+                  className={`${rowClass} w-full text-left`}
+                >
+                  <span className="text-[#B7FF45] font-semibold">EMAIL</span>
+                  <span className={rowValue}>
+                    {copied ? (
+                      <span className="text-[#B7FF45] font-bold">COPIED TO CLIPBOARD ◈</span>
+                    ) : (
+                      `${personalInfo.email} ⧉`
+                    )}
+                  </span>
+                </button>
+
+                {/* GitHub */}
+                <a
+                  href={personalInfo.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={rowClass}
+                >
+                  <span className="text-[#B7FF45] font-semibold">GITHUB</span>
+                  <span className={rowValue}>{displayUrl(personalInfo.github)} <span className="arrow-nudge">↗</span></span>
+                </a>
+
+                {/* LinkedIn */}
+                <a
+                  href={personalInfo.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={rowClass}
+                >
+                  <span className="text-[#B7FF45] font-semibold">LINKEDIN</span>
+                  <span className={rowValue}>{displayUrl(personalInfo.linkedin)} <span className="arrow-nudge">↗</span></span>
+                </a>
+
+                {/* Resume */}
+                <a
+                  href={personalInfo.resumeLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={rowClass}
+                >
+                  <span className="text-[#B7FF45] font-semibold">RESUME / CV</span>
+                  <span className={rowValue}>PDF_DOWNLOAD ↓</span>
+                </a>
+              </div>
+            </motion.div>
+
+            {/* Transmission Form */}
+            <motion.form
+              onSubmit={handleSubmit}
+              className="bg-[#0C130F] p-8 border border-[rgba(183,255,69,0.2)] relative shadow-[0_10px_30px_rgba(0,0,0,0.5)] grid gap-4"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <div className="absolute top-1.5 left-1.5 w-2 h-2 border-t-2 border-l-2 border-[#B7FF45]" />
+              <div className="absolute top-1.5 right-1.5 w-2 h-2 border-t-2 border-r-2 border-[#B7FF45]" />
+
+              <div className="font-mono text-xs uppercase tracking-widest text-[#B7FF45] mb-2 flex items-center gap-2">
+                <span>&gt;</span>
+                <span>COMMS_TRANSMITTER</span>
+              </div>
+
+              <label htmlFor="name" className={labelClass}>
+                <span>IDENTIFIER / NAME</span>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formState.name}
+                  onChange={handleInputChange}
+                  placeholder="Enter your name or entity"
+                  required
+                  className={inputClass}
+                />
+              </label>
+
+              <label htmlFor="email" className={labelClass}>
+                <span>FREQUENCY ADDRESS / EMAIL</span>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formState.email}
+                  onChange={handleInputChange}
+                  placeholder="name@domain.com"
+                  required
+                  className={inputClass}
+                />
+              </label>
+
+              <label htmlFor="message" className={labelClass}>
+                <span>PAYLOAD / MESSAGE</span>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formState.message}
+                  onChange={handleInputChange}
+                  placeholder="Transmit your message here..."
+                  required
+                  className={`${inputClass} min-h-[130px] resize-y`}
+                />
+              </label>
+
+              <button
+                type="submit"
+                disabled={status === "sending"}
+                className="mt-2 inline-flex items-center justify-center gap-2.5 px-7 py-4 bg-[#B7FF45] text-[#050806] font-mono text-sm font-bold tracking-wider uppercase hover:bg-[#8CFF72] hover:shadow-[0_0_24px_rgba(183,255,69,0.5)] transition-all duration-200 disabled:opacity-50"
+              >
+                {status === "idle" && (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <line x1="22" y1="2" x2="11" y2="13"></line>
+                      <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                    <span>TRANSMIT MESSAGE</span>
+                  </>
+                )}
+                {status === "sending" && <span>ENCRYPTING &amp; TRANSMITTING...</span>}
+                {status === "success" && (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>TRANSMISSION CONFIRMED!</span>
+                  </>
+                )}
+              </button>
+            </motion.form>
+          </div>
         </div>
-      </div>
-    </section>
+
+      </section>
+
+      {/* Animated Alien Spacecraft Pursuit Strip */}
+      <AlienPursuit />
+
+      {/* Futuristic Spacecraft Footer */}
+      <footer className="border-t border-[rgba(183,255,69,0.18)] bg-[#050806] text-[#AAB6AA] py-6 font-mono text-xs">
+        <div className="wrap flex flex-wrap items-center justify-between gap-x-8 gap-y-3">
+          <p className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 bg-[#B7FF45] rounded-full" />
+            <span>SYSTEM STATUS: OPERATIONAL</span>
+            <span className="text-white/20">//</span>
+            <span>ENGINEERED BY <strong className="text-[#B7FF45] font-semibold">{personalInfo.name.toUpperCase()}</strong></span>
+          </p>
+
+          <p className="text-[#778379]">© {new Date().getFullYear()} · ALL RIGHTS RESERVED</p>
+
+          <a
+            href="#home"
+            className="inline-flex items-center gap-2 text-[#F5F8F4] hover:text-[#B7FF45] transition-colors"
+          >
+            <span>RETURN TO TOP</span>
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 19V5m-6 6 6-6 6 6" />
+            </svg>
+          </a>
+        </div>
+      </footer>
+    </div>
   );
 }

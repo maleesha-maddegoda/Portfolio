@@ -1,41 +1,53 @@
-import { LoadingScreen } from "@/components/loading-screen";
-import { NeuralBackground } from "@/components/neural-background";
-import { Navbar } from "@/components/navbar";
-import { Hero } from "@/components/hero";
-import { About } from "@/components/about";
-import { AIFocus } from "@/components/ai-focus";
-import { Education } from "@/components/education";
-import { Skills } from "@/components/skills";
-import { Projects } from "@/components/projects";
-import { Certifications } from "@/components/certifications";
-import { Contact } from "@/components/contact";
-import { Footer } from "@/components/footer";
-import { ScrollProgress } from "@/components/scroll-progress";
+import Nav from "@/components/Nav";
+import Hero from "@/components/Hero";
+import About from "@/components/About";
+import Toolkit from "@/components/Toolkit";
+import Projects from "@/components/Projects";
+import Experience from "@/components/Experience";
+import Achievements from "@/components/Achievements";
+import Certifications from "@/components/Certifications";
+import Contact from "@/components/Contact";
+import VeeBot from "@/components/VeeBot";
+import { SHOW_ACHIEVEMENTS } from "@/lib/sections";
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--color-bg-primary)] text-[var(--color-text-primary)]">
-      <LoadingScreen />
-      <NeuralBackground />
-      <ScrollProgress />
+    <main className="bg-[var(--bg-primary)] text-[var(--text-primary)] overflow-x-hidden relative min-h-screen transition-colors duration-300">
+      <div className="relative z-10">
+        <Nav />
+        <section id="home">
+          <Hero />
+        </section>
+        <section id="about">
+          <About />
+        </section>
+        <section id="projects">
+          <Projects />
+        </section>
+        <section id="skills">
+          <Toolkit />
+        </section>
+        <section id="experience">
+          <Experience />
+        </section>
+        {/* Achievements — appears once data/portfolio.ts has at least one entry */}
+        {SHOW_ACHIEVEMENTS && (
+          <section id="achievements">
+            <Achievements />
+          </section>
+        )}
 
-      {/* ── HEADER ── */}
-      <Navbar />
+        <section id="certifications">
+          <Certifications />
+        </section>
 
-      {/* ── BODY (MAIN CONTENT) ── */}
-      <main id="main-content" className="flex-1 relative selection:bg-[var(--color-accent-dim)] selection:text-[var(--color-accent)]">
-        <Hero />
-        <About />
-        <AIFocus />
-        <Education />
-        <Skills />
-        <Projects />
-        <Certifications />
-        <Contact />
-      </main>
+        <section id="contact">
+          <Contact />
+        </section>
+      </div>
 
-      {/* ── FOOTER ── */}
-      <Footer />
-    </div>
+      {/* Vee, the interactive portfolio guide (bottom-right) */}
+      <VeeBot />
+    </main>
   );
 }

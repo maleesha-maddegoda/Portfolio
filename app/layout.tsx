@@ -1,84 +1,42 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { seoInfo } from "@/data/personal";
+import Preloader from "@/components/Preloader";
+import PointerLight from "@/components/PointerLight";
+import { personalInfo } from "@/data/portfolio";
 
 export const metadata: Metadata = {
-  title: seoInfo.title,
-  description: seoInfo.description,
-  keywords: [
-    "Maleesha Maddegoda",
-    "AI Engineer",
-    "ML Engineer",
-    "Full Stack Developer",
-    "SLIIT",
-    "Sri Lanka",
-    "Machine Learning",
-    "Artificial Intelligence",
-    "Software Engineer",
-    "Portfolio",
-  ],
+  title: `${personalInfo.name} | AI & ML Engineer | Full-Stack Portfolio`,
+  description:
+    "Portfolio of Maleesha Maddegoda — Artificial Intelligence & Data Science undergraduate at SLIIT, architecting intelligent neural pipelines and robust full-stack applications.",
+  keywords: ["AI Engineer", "Machine Learning", "Computer Vision", "PyTorch", "Full Stack", "SLIIT", "Maleesha Maddegoda"],
   authors: [{ name: "Maleesha Maddegoda" }],
-  creator: "Maleesha Maddegoda",
-  metadataBase: new URL(seoInfo.canonical),
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
+    title: "Maleesha Maddegoda | AI & ML Portfolio",
+    description: "Artificial Intelligence undergraduate at SLIIT architecting intelligent systems and full-stack software.",
     type: "website",
-    url: seoInfo.canonical,
-    title: seoInfo.title,
-    description: seoInfo.description,
-    siteName: "Maleesha Maddegoda Portfolio",
-    images: [
-      {
-        url: seoInfo.ogImage,
-        width: 1200,
-        height: 630,
-        alt: "Maleesha Maddegoda — AI & ML Engineer Portfolio",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: seoInfo.title,
-    description: seoInfo.description,
-    images: [seoInfo.ogImage],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  icons: {
-    icon: "/favicon.ico",
   },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head />
-      <body>
-        <ThemeProvider
-          attribute="data-theme"
-          defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange={false}
-          storageKey="maleesha-portfolio-theme"
-        >
-          {children}
-        </ThemeProvider>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
+        />
+      </head>
+      <body
+        suppressHydrationWarning
+        className="bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans antialiased transition-colors duration-300"
+      >
+        <Preloader />
+        <PointerLight />
+        {children}
       </body>
     </html>
   );
