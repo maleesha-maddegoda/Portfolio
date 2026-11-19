@@ -1,26 +1,15 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
-import {
-  makeReferenceId,
-  ownerNotificationEmail,
-  visitorConfirmationEmail,
-  type ContactEmailData,
-} from "@/lib/emailTemplates";
 
 export const runtime = "nodejs";
 
-export async function POST(request: Request) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_TO_EMAIL;
-  if (!apiKey || !to) {
-    return NextResponse.json({ error: "Email is not configured." }, { status: 500 });
-  }
+const WEB3FORMS_KEY = process.env.WEB3FORMS_ACCESS_KEY || "203197a5-d7d4-424c-b13e-3d145e0d66b7";
 
+export async function POST(request: Request) {
   let body: { name?: unknown; email?: unknown; message?: unknown };
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    return NextResponse.json({ error: "Invalid request payload." }, { status: 400 });
   }
 
   const name = typeof body.name === "string" ? body.name.trim() : "";
@@ -28,29 +17,40 @@ export async function POST(request: Request) {
   const message = typeof body.message === "string" ? body.message.trim() : "";
 
   if (!name || !email || !message) {
-    return NextResponse.json({ error: "All fields are required." }, { status: 400 });
+    return NextResponse.json({ error: "All transmission parameters are required." }, { status: 400 });
   }
+
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || name.length > 100 || email.length > 200 || message.length > 5000) {
-    return NextResponse.json({ error: "Invalid input." }, { status: 400 });
+    return NextResponse.json({ error: "Invalid contact parameters." }, { status: 400 });
   }
 
-  const resend = new Resend(apiKey);
-  const from = process.env.CONTACT_FROM_EMAIL || "Portfolio Contact <onboarding@resend.dev>";
-  const data: ContactEmailData = { name, email, message, referenceId: makeReferenceId(), receivedAt: new Date() };
+  try {
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        access_key: WEB3FORMS_KEY,
+        name,
+        email,
+        message,
+        subject: `[Portfolio Comms] New Transmission from ${name}`,
+        from_name: "Portfolio Comms Terminal",
+      }),
+    });
 
-  const owner = ownerNotificationEmail(data);
-  const { error } = await resend.emails.send({ from, to, replyTo: email, ...owner });
+    const data = await response.json();
 
-  if (error) {
-    console.error("Resend error", error);
-    return NextResponse.json({ error: "Failed to send." }, { status: 502 });
+    if (!data.success) {
+      console.error("Web3Forms submission failed:", data);
+      return NextResponse.json({ error: data.message || "Failed to dispatch message." }, { status: 502 });
+    }
+
+    return NextResponse.json({ ok: true, message: "Transmission received." });
+  } catch (error) {
+    console.error("Web3Forms transmission error:", error);
+    return NextResponse.json({ error: "Network transmission error." }, { status: 500 });
   }
-
-  // Confirmation copy to the address the visitor entered in the form.
-  // A failure here is logged but doesn't fail the request — the owner already has the message.
-  const confirmation = visitorConfirmationEmail(data);
-  const { error: confirmError } = await resend.emails.send({ from, to: email, replyTo: to, ...confirmation });
-  if (confirmError) console.error("Resend confirmation error", confirmError);
-
-  return NextResponse.json({ ok: true, referenceId: data.referenceId, confirmationSent: !confirmError });
 }

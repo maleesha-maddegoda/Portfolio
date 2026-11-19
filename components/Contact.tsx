@@ -44,28 +44,68 @@ export default function Contact() {
     if (!formState.name || !formState.email || !formState.message) return;
     setStatus("sending");
 
+    const payload = {
+      name: formState.name,
+      email: formState.email,
+      message: formState.message,
+    };
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formState.name,
-          email: formState.email,
-          message: formState.message,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         setStatus("success");
         setFormState({ name: "", email: "", message: "" });
-        setTimeout(() => setStatus("idle"), 3000);
+        setTimeout(() => setStatus("idle"), 4000);
+        return;
+      }
+
+      // Fallback directly to Web3Forms API
+      const fallbackRes = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: "203197a5-d7d4-424c-b13e-3d145e0d66b7",
+          ...payload,
+          subject: `[Portfolio Comms] New Transmission from ${payload.name}`,
+          from_name: "Portfolio Comms Terminal",
+        }),
+      });
+
+      if (fallbackRes.ok) {
+        setStatus("success");
+        setFormState({ name: "", email: "", message: "" });
+        setTimeout(() => setStatus("idle"), 4000);
       } else {
-        console.error("Form submission failed");
         setStatus("idle");
         alert("Transmission error. Please try again or reach out directly via email.");
       }
-    } catch (error) {
-      console.error("Error submitting form", error);
+    } catch {
+      try {
+        const fallbackRes = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            access_key: "203197a5-d7d4-424c-b13e-3d145e0d66b7",
+            ...payload,
+            subject: `[Portfolio Comms] New Transmission from ${payload.name}`,
+            from_name: "Portfolio Comms Terminal",
+          }),
+        });
+
+        if (fallbackRes.ok) {
+          setStatus("success");
+          setFormState({ name: "", email: "", message: "" });
+          setTimeout(() => setStatus("idle"), 4000);
+          return;
+        }
+      } catch {
+        // ignore
+      }
       setStatus("idle");
       alert("Network transmission error. Please try again later.");
     }
