@@ -12,7 +12,7 @@ import { SHOW_ACHIEVEMENTS } from "@/lib/sections";
 import { fetchGitHubProjects } from "@/lib/github";
 import { minorProjects } from "@/data/portfolio";
 
-export const revalidate = 300; // revalidate every 5 minutes (ISR)
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   let initialProjects = minorProjects;
