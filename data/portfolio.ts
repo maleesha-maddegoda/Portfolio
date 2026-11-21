@@ -197,6 +197,9 @@ export interface MinorProject {
   github: string;
   live?: string;
   imageUrl?: string;
+  stars?: number;
+  updatedAt?: string;
+  isFork?: boolean;
 }
 
 export const minorProjects: MinorProject[] = [];

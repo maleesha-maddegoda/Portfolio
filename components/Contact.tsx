@@ -334,6 +334,10 @@ export default function Contact() {
 
           <a
             href="#home"
+            onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
             className="inline-flex items-center gap-2 text-[#F5F8F4] hover:text-[#B7FF45] transition-colors"
           >
             <span>RETURN TO TOP</span>

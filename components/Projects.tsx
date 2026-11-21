@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { featuredProjects, minorProjects } from "@/data/portfolio";
+import { featuredProjects, minorProjects, MinorProject } from "@/data/portfolio";
 import SectionHeader from "@/components/SectionHeader";
 
 function GitHubIcon() {
@@ -27,11 +27,59 @@ const filters: Filter[] = ["All", ...categories];
 
 export default function Projects() {
   const [activeFilter, setActiveFilter] = useState<Filter>("All");
+  const [githubProjects, setGithubProjects] = useState<MinorProject[]>(minorProjects);
+  const [isLoading, setIsLoading] = useState(true);
+  const [syncState, setSyncState] = useState<"syncing" | "live" | "cached">("syncing");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadGitHubProjects() {
+      try {
+        const res = await fetch("/api/github-projects");
+        if (!res.ok) throw new Error("Sync request failed");
+        const data = await res.json();
+
+        if (isMounted && data.projects && Array.isArray(data.projects)) {
+          // If live repos returned, set them
+          if (data.projects.length > 0) {
+            setGithubProjects(data.projects);
+            setSyncState(data.source === "github" ? "live" : "cached");
+          } else if (minorProjects.length > 0) {
+            setGithubProjects(minorProjects);
+            setSyncState("cached");
+          }
+        }
+      } catch (err) {
+        console.warn("Could not sync live projects from GitHub API:", err);
+        if (isMounted) {
+          setSyncState("cached");
+          if (minorProjects.length > 0) {
+            setGithubProjects(minorProjects);
+          }
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadGitHubProjects();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const allMinorProjects = githubProjects.length > 0 ? githubProjects : minorProjects;
 
   const filteredProjects =
     activeFilter === "All"
-      ? minorProjects
-      : minorProjects.filter((p) => p.category === activeFilter);
+      ? allMinorProjects
+      : allMinorProjects.filter((p) => p.category === activeFilter);
+
+  const hasAnyProjects = featuredProjects.length > 0 || allMinorProjects.length > 0;
 
   return (
     <section id="projects" className="py-[120px] bg-[#050806] relative">
@@ -41,7 +89,31 @@ export default function Projects() {
           subtitle="Curated spacecraft systems and intelligent architectures spanning deep learning, computer vision, and full-stack engineering."
         />
 
-        {featuredProjects.length === 0 && minorProjects.length === 0 ? (
+        {isLoading && !hasAnyProjects ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full p-10 sm:p-14 border border-[rgba(183,255,69,0.25)] bg-[#0C130F] relative overflow-hidden text-center max-w-3xl mx-auto my-8 shadow-[0_16px_50px_rgba(0,0,0,0.8)]"
+          >
+            <div className="absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 border-[#B7FF45]" />
+            <div className="absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 border-[#B7FF45]" />
+            <div className="absolute bottom-2 left-2 w-3 h-3 border-b-2 border-l-2 border-[#B7FF45]" />
+            <div className="absolute bottom-2 right-2 w-3 h-3 border-b-2 border-r-2 border-[#B7FF45]" />
+
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-[#101812] border border-[#B7FF45]/40 text-[#B7FF45] font-mono text-xs uppercase tracking-widest mb-4">
+              <span className="w-2 h-2 rounded-full bg-[#B7FF45] animate-ping" />
+              <span>SYNCING WITH GITHUB API</span>
+            </div>
+
+            <h3 className="font-heading text-2xl sm:text-3xl font-bold text-[#F5F8F4] mb-3">
+              Querying Public Repositories...
+            </h3>
+
+            <p className="text-[#AAB6AA] text-sm max-w-xl mx-auto leading-relaxed font-mono">
+              Establishing live handshake with GitHub REST API to synchronize the latest public repositories, code telemetry, and deployments.
+            </p>
+          </motion.div>
+        ) : !hasAnyProjects ? (
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -57,15 +129,15 @@ export default function Projects() {
 
             <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-[#101812] border border-[#B7FF45]/40 text-[#B7FF45] font-mono text-xs uppercase tracking-widest mb-4">
               <span className="w-2 h-2 rounded-full bg-[#B7FF45] animate-ping" />
-              <span>GITHUB REPOSITORIES INCOMING</span>
+              <span>GITHUB LIVE SYNC CONNECTED</span>
             </div>
 
             <h3 className="font-heading text-2xl sm:text-3xl font-bold text-[#F5F8F4] mb-3">
-              Projects Being Synchronized
+              Projects Synchronizing
             </h3>
 
             <p className="text-[#AAB6AA] text-sm sm:text-base max-w-xl mx-auto leading-relaxed mb-6 font-sans">
-              Currently curating and deploying new machine learning models, neural architectures, and full-stack applications directly from GitHub. Check out active repositories below.
+              Live GitHub synchronization is active. As soon as you publish repositories on GitHub, they will appear right here in real time.
             </p>
 
             <a
@@ -93,7 +165,7 @@ export default function Projects() {
                     transition={{ duration: 0.6, ease: "easeOut" }}
                     className={`group/row grid lg:grid-cols-12 gap-8 items-center ${project.reversed ? "lg:text-right" : ""}`}
                   >
-                    {/* Image Terminal: on hover a green glow blooms, light sweep, and corner highlights */}
+                    {/* Image Terminal */}
                     <a
                       href={project.live ?? project.github}
                       target="_blank"
@@ -101,14 +173,12 @@ export default function Projects() {
                       aria-label={`${project.live ? "Open live site" : "View code"}: ${project.title}`}
                       className={`group relative block lg:col-span-7 ${project.reversed ? "lg:order-2" : ""}`}
                     >
-                      {/* Luminous green glow on hover */}
                       <div
                         aria-hidden="true"
                         className="pointer-events-none absolute -inset-3 bg-[#B7FF45]/15 blur-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                       />
 
                       <div className="relative overflow-hidden aspect-video bg-[#0C130F] border border-[rgba(183,255,69,0.25)] group-hover:border-[#B7FF45] transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
-                        {/* Futuristic corner tick marks */}
                         <div className="absolute top-1.5 left-1.5 w-2 h-2 border-t-2 border-l-2 border-[#B7FF45] z-10" />
                         <div className="absolute top-1.5 right-1.5 w-2 h-2 border-t-2 border-r-2 border-[#B7FF45] z-10" />
                         <div className="absolute bottom-1.5 left-1.5 w-2 h-2 border-b-2 border-l-2 border-[#B7FF45] z-10" />
@@ -188,21 +258,24 @@ export default function Projects() {
             )}
 
             {/* ── Other Noteworthy Projects: cohesive dark spacecraft database ── */}
-            {minorProjects.length > 0 && (
+            {allMinorProjects.length > 0 && (
               <div className="pt-16 border-t border-[rgba(183,255,69,0.18)]">
                 <div className="flex flex-wrap items-end justify-between gap-6 mb-10">
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="w-1.5 h-1.5 bg-[#B7FF45]" />
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#B7FF45] opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-[#B7FF45]"></span>
+                      </span>
                       <span className="font-mono text-xs uppercase tracking-widest text-[#B7FF45]">
-                        DATABASE_ARCHIVE
+                        DATABASE_ARCHIVE // {syncState === "live" ? "LIVE GITHUB SYNC" : "GITHUB REPOSITORIES"}
                       </span>
                     </div>
                     <h3 className="font-heading text-2xl md:text-3xl font-bold text-[#F5F8F4]">
-                      Other Noteworthy Projects
+                      Repositories & Machine Learning Models
                     </h3>
                     <p className="mt-1 text-sm text-[#AAB6AA]">
-                      Experiments, machine learning models, and tools developed across various stacks.
+                      Synchronized directly from public GitHub repositories across various architectures and frameworks.
                     </p>
                   </div>
 
@@ -239,92 +312,104 @@ export default function Projects() {
                 </div>
 
                 {/* Database Grid */}
-                <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <AnimatePresence mode="popLayout">
-                    {filteredProjects.map((project) => {
-                      const primary = project.live ?? project.github;
-                      return (
-                        <motion.div
-                          layout
-                          key={project.title}
-                          initial={{ opacity: 0, scale: 0.96 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.96 }}
-                          transition={{ duration: 0.3 }}
-                          className="flex"
-                        >
-                          <article className="group flex w-full flex-col border border-[rgba(183,255,69,0.2)] bg-[#0C130F] transition-all duration-300 hover:border-[#B7FF45] hover:shadow-[0_0_24px_rgba(183,255,69,0.2)] hover:-translate-y-1 relative">
-                            {/* Full screenshot */}
-                            {project.imageUrl && (
-                              <a
-                                href={primary}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                tabIndex={-1}
-                                aria-hidden="true"
-                                className="relative block aspect-video overflow-hidden bg-[#050806] border-b border-[rgba(183,255,69,0.15)]"
-                              >
-                                <img
-                                  src={project.imageUrl}
-                                  alt=""
-                                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 ease-out"
-                                />
-                                <span aria-hidden="true" className="shine-sweep" />
-                              </a>
-                            )}
-
-                            <div className="flex flex-1 flex-col p-6 sm:p-7">
-                              {/* Category badge */}
-                              <div className="flex flex-wrap items-center justify-between gap-3">
-                                <span className="px-2.5 py-1 bg-[#101812] border border-[#B7FF45]/30 text-[#B7FF45] font-mono text-[0.72rem] font-bold uppercase tracking-wider">
-                                  {project.category}
-                                </span>
-                              </div>
-
-                              <h4 className="mt-4 font-heading text-xl font-bold text-[#F5F8F4] group-hover:text-[#B7FF45] transition-colors">
-                                {project.title}
-                              </h4>
-
-                              <p className="mt-1 font-mono text-xs text-[#8CFF72]/80 leading-relaxed">
-                                {project.tags.join(" · ")}
-                              </p>
-
-                              <p className="mt-3.5 text-sm leading-relaxed text-[#AAB6AA]">
-                                {project.description}
-                              </p>
-
-                              {/* Telemetry Links */}
-                              <div className="mt-auto pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-white/5">
+                {filteredProjects.length === 0 ? (
+                  <div className="p-8 border border-[rgba(183,255,69,0.2)] bg-[#0C130F] text-center font-mono text-sm text-[#AAB6AA]">
+                    No repositories found in category <span className="text-[#B7FF45]">"{activeFilter}"</span>. Select "All" to view all repositories.
+                  </div>
+                ) : (
+                  <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <AnimatePresence mode="popLayout">
+                      {filteredProjects.map((project) => {
+                        const primary = project.live ?? project.github;
+                        return (
+                          <motion.div
+                            layout
+                            key={project.github || project.title}
+                            initial={{ opacity: 0, scale: 0.96 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.96 }}
+                            transition={{ duration: 0.3 }}
+                            className="flex"
+                          >
+                            <article className="group flex w-full flex-col border border-[rgba(183,255,69,0.2)] bg-[#0C130F] transition-all duration-300 hover:border-[#B7FF45] hover:shadow-[0_0_24px_rgba(183,255,69,0.2)] hover:-translate-y-1 relative">
+                              {/* Full screenshot if available */}
+                              {project.imageUrl && (
                                 <a
                                   href={primary}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="font-mono text-xs font-bold text-[#B7FF45] hover:text-[#F5F8F4] transition-colors flex items-center gap-1.5"
+                                  tabIndex={-1}
+                                  aria-hidden="true"
+                                  className="relative block aspect-video overflow-hidden bg-[#050806] border-b border-[rgba(183,255,69,0.15)]"
                                 >
-                                  <span>{project.live ? "ACCESS LIVE" : "INSPECT CODE"}</span>
-                                  <span className="arrow-nudge">↗</span>
+                                  <img
+                                    src={project.imageUrl}
+                                    alt=""
+                                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 ease-out"
+                                  />
+                                  <span aria-hidden="true" className="shine-sweep" />
                                 </a>
+                              )}
 
-                                {project.live && (
+                              <div className="flex flex-1 flex-col p-6 sm:p-7">
+                                {/* Category badge & stars */}
+                                <div className="flex flex-wrap items-center justify-between gap-3">
+                                  <span className="px-2.5 py-1 bg-[#101812] border border-[#B7FF45]/30 text-[#B7FF45] font-mono text-[0.72rem] font-bold uppercase tracking-wider">
+                                    {project.category}
+                                  </span>
+                                  {project.stars !== undefined && project.stars > 0 && (
+                                    <span className="flex items-center gap-1 font-mono text-[0.72rem] text-[#B7FF45] bg-[#101812] px-2 py-0.5 border border-[#B7FF45]/20">
+                                      <span>★</span>
+                                      <span>{project.stars}</span>
+                                    </span>
+                                  )}
+                                </div>
+
+                                <h4 className="mt-4 font-heading text-xl font-bold text-[#F5F8F4] group-hover:text-[#B7FF45] transition-colors">
+                                  {project.title}
+                                </h4>
+
+                                <p className="mt-1 font-mono text-xs text-[#8CFF72]/80 leading-relaxed">
+                                  {project.tags.join(" · ")}
+                                </p>
+
+                                <p className="mt-3.5 text-sm leading-relaxed text-[#AAB6AA]">
+                                  {project.description}
+                                </p>
+
+                                {/* Telemetry Links */}
+                                <div className="mt-auto pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-white/5">
                                   <a
-                                    href={project.github}
+                                    href={primary}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    aria-label={`${project.title} source code on GitHub`}
-                                    className="font-mono text-xs font-bold text-[#AAB6AA] hover:text-[#B7FF45] transition-colors flex items-center gap-1"
+                                    className="font-mono text-xs font-bold text-[#B7FF45] hover:text-[#F5F8F4] transition-colors flex items-center gap-1.5"
                                   >
-                                    <span>GITHUB</span>
+                                    <span>{project.live ? "ACCESS LIVE" : "INSPECT CODE"}</span>
                                     <span className="arrow-nudge">↗</span>
                                   </a>
-                                )}
+
+                                  {project.github && (
+                                    <a
+                                      href={project.github}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      aria-label={`${project.title} source code on GitHub`}
+                                      className="font-mono text-xs font-bold text-[#AAB6AA] hover:text-[#B7FF45] transition-colors flex items-center gap-1"
+                                    >
+                                      <span>GITHUB</span>
+                                      <span className="arrow-nudge">↗</span>
+                                    </a>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          </article>
-                        </motion.div>
-                      );
-                    })}
-                  </AnimatePresence>
-                </motion.div>
+                            </article>
+                          </motion.div>
+                        );
+                      })}
+                    </AnimatePresence>
+                  </motion.div>
+                )}
               </div>
             )}
           </>

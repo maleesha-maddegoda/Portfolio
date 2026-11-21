@@ -85,9 +85,13 @@ export default function Preloader() {
   const status = STATUS.find(([t]) => progress < t)?.[1] ?? STATUS[STATUS.length - 1][1];
   const pct = Math.round(progress * 100);
 
-  // Lock scroll while the intro plays
+  // Lock scroll while the intro plays & guarantee view starts at top
   useEffect(() => {
+    window.scrollTo(0, 0);
     document.body.style.overflow = done ? "" : "hidden";
+    if (done) {
+      window.scrollTo(0, 0);
+    }
     return () => {
       document.body.style.overflow = "";
     };
