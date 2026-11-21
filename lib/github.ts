@@ -50,6 +50,7 @@ export function categorizeRepo(
         "yolo",
         "scikit-learn",
         "artificial-intelligence",
+        "gemini",
       ].includes(t)
     ) ||
     text.includes("machine learning") ||
@@ -61,6 +62,14 @@ export function categorizeRepo(
     text.includes("yolo") ||
     text.includes("langchain") ||
     text.includes("huggingface") ||
+    text.includes("gemini") ||
+    text.includes("efficientnet") ||
+    text.includes("ai-powered") ||
+    text.includes("ai companion") ||
+    text.includes("crop disease") ||
+    name.includes("ai") ||
+    desc.includes(" ai ") ||
+    desc.startsWith("ai ") ||
     lang === "jupyter notebook"
   ) {
     return "AI / ML";

@@ -202,7 +202,63 @@ export interface MinorProject {
   isFork?: boolean;
 }
 
-export const minorProjects: MinorProject[] = [];
+export const minorProjects: MinorProject[] = [
+  {
+    title: "Serenity AI Companion",
+    description:
+      "An empathetic, trilingual AI voice and text companion providing emotional support in English, Sinhala, and Tamil. Powered by Google Gemini.",
+    tags: ["Google Gemini", "JavaScript", "NLP", "Speech Synthesis", "Trilingual AI"],
+    category: "AI / ML",
+    github: "https://github.com/maleesha-maddegoda/serenity-ai-companion",
+    stars: 0,
+  },
+  {
+    title: "Earth Scope",
+    description:
+      "Worldwide Earth-science trend analysis platform powered by real NASA POWER satellite data, rigorous statistical tests (OLS, Mann-Kendall, FDR), and Google Gemini AI.",
+    tags: ["Python", "NASA POWER API", "Google Gemini AI", "Statistics", "Machine Learning"],
+    category: "AI / ML",
+    github: "https://github.com/maleesha-maddegoda/Earth-Scope",
+    stars: 0,
+  },
+  {
+    title: "Agrinova AI",
+    description:
+      "AI-powered crop disease early warning system featuring EfficientNet leaf diagnosis, HSV severity estimation, trilingual farmer advisory (Sinhala, Tamil, English), regional outbreak surveillance, and an Agriculture Officer triage dashboard.",
+    tags: ["EfficientNet", "Computer Vision", "Deep Learning", "JavaScript", "HSV Analysis"],
+    category: "AI / ML",
+    github: "https://github.com/maleesha-maddegoda/agrinova-ai",
+    stars: 0,
+  },
+  {
+    title: "Legal Mind AI",
+    description:
+      "An intelligent legal intelligence platform powered by Google Gemini and FastAPI for contract risk scoring, automated summarization, deadline extraction, and interactive legal AI chat.",
+    tags: ["FastAPI", "Google Gemini", "Python", "Contract Analysis", "Fullstack"],
+    category: "Fullstack",
+    github: "https://github.com/maleesha-maddegoda/legal-mind-ai",
+    stars: 0,
+  },
+  {
+    title: "Intermission Cinema App",
+    description:
+      "A full-stack cinema management and ticket booking application built with React Native (Expo), Node.js, Express, and MongoDB.",
+    tags: ["React Native", "Expo", "Node.js", "Express", "MongoDB"],
+    category: "Mobile App",
+    github: "https://github.com/maleesha-maddegoda/intermission-cinema-app",
+    stars: 0,
+  },
+  {
+    title: "Portfolio",
+    description:
+      "Personal portfolio showcasing my journey as an AI & ML undergraduate. Exploring Artificial Intelligence & Machine Learning architectures, neural systems, and modern full-stack web engineering.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Three.js"],
+    category: "Web Development",
+    github: "https://github.com/maleesha-maddegoda/Portfolio",
+    live: "https://maleesha-maddegoda.vercel.app",
+    stars: 0,
+  },
+];
 
 // ─── EXPERIENCE ───────────────────────────────────────────
 export interface ExperienceItem {

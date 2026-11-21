@@ -25,11 +25,21 @@ const categories = ["AI / ML", "Web Development", "Mobile App", "Fullstack", "De
 type Filter = "All" | (typeof categories)[number];
 const filters: Filter[] = ["All", ...categories];
 
-export default function Projects() {
+export default function Projects({
+  initialProjects = [],
+}: {
+  initialProjects?: MinorProject[];
+}) {
   const [activeFilter, setActiveFilter] = useState<Filter>("All");
-  const [githubProjects, setGithubProjects] = useState<MinorProject[]>(minorProjects);
-  const [isLoading, setIsLoading] = useState(true);
-  const [syncState, setSyncState] = useState<"syncing" | "live" | "cached">("syncing");
+  const [githubProjects, setGithubProjects] = useState<MinorProject[]>(
+    initialProjects.length > 0 ? initialProjects : minorProjects
+  );
+  const [isLoading, setIsLoading] = useState(
+    initialProjects.length === 0 && minorProjects.length === 0
+  );
+  const [syncState, setSyncState] = useState<"syncing" | "live" | "cached">(
+    initialProjects.length > 0 ? "live" : "syncing"
+  );
 
   useEffect(() => {
     let isMounted = true;
