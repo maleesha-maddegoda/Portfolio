@@ -210,7 +210,6 @@ export const minorProjects: MinorProject[] = [
     tags: ["Google Gemini", "JavaScript", "NLP", "Speech Synthesis", "Trilingual AI"],
     category: "AI / ML",
     github: "https://github.com/maleesha-maddegoda/serenity-ai-companion",
-    imageUrl: "https://opengraph.githubassets.com/1/maleesha-maddegoda/serenity-ai-companion",
     stars: 0,
   },
   {
@@ -220,7 +219,6 @@ export const minorProjects: MinorProject[] = [
     tags: ["Python", "NASA POWER API", "Google Gemini AI", "Statistics", "Machine Learning"],
     category: "AI / ML",
     github: "https://github.com/maleesha-maddegoda/Earth-Scope",
-    imageUrl: "https://opengraph.githubassets.com/1/maleesha-maddegoda/Earth-Scope",
     stars: 0,
   },
   {
@@ -230,7 +228,6 @@ export const minorProjects: MinorProject[] = [
     tags: ["EfficientNet", "Computer Vision", "Deep Learning", "JavaScript", "HSV Analysis"],
     category: "AI / ML",
     github: "https://github.com/maleesha-maddegoda/agrinova-ai",
-    imageUrl: "https://opengraph.githubassets.com/1/maleesha-maddegoda/agrinova-ai",
     stars: 0,
   },
   {
@@ -240,7 +237,6 @@ export const minorProjects: MinorProject[] = [
     tags: ["FastAPI", "Google Gemini", "Python", "Contract Analysis", "Fullstack"],
     category: "Fullstack",
     github: "https://github.com/maleesha-maddegoda/legal-mind-ai",
-    imageUrl: "https://opengraph.githubassets.com/1/maleesha-maddegoda/legal-mind-ai",
     stars: 0,
   },
   {
@@ -250,7 +246,6 @@ export const minorProjects: MinorProject[] = [
     tags: ["React Native", "Expo", "Node.js", "Express", "MongoDB"],
     category: "Mobile App",
     github: "https://github.com/maleesha-maddegoda/intermission-cinema-app",
-    imageUrl: "https://opengraph.githubassets.com/1/maleesha-maddegoda/intermission-cinema-app",
     stars: 0,
   },
   {
@@ -261,7 +256,6 @@ export const minorProjects: MinorProject[] = [
     category: "Web Development",
     github: "https://github.com/maleesha-maddegoda/Portfolio",
     live: "https://maleesha-maddegoda.vercel.app",
-    imageUrl: "https://opengraph.githubassets.com/1/maleesha-maddegoda/Portfolio",
     stars: 0,
   },
 ];

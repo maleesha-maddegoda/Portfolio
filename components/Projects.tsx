@@ -331,11 +331,6 @@ export default function Projects({
                     <AnimatePresence mode="popLayout">
                       {filteredProjects.map((project) => {
                         const primary = project.live ?? project.github;
-                        const previewImage =
-                          project.imageUrl ||
-                          (project.github
-                            ? `https://opengraph.githubassets.com/1/${project.github.replace("https://github.com/", "")}`
-                            : undefined);
 
                         return (
                           <motion.div
@@ -347,100 +342,64 @@ export default function Projects({
                             transition={{ duration: 0.3 }}
                             className="flex"
                           >
-                            <article className="group flex w-full flex-col border border-[rgba(183,255,69,0.2)] bg-[#0C130F] transition-all duration-300 hover:border-[#B7FF45] hover:shadow-[0_0_24px_rgba(183,255,69,0.2)] hover:-translate-y-1 relative">
-                              {/* Topic UI Image Banner */}
-                              {previewImage && (
-                                <a
-                                  href={primary}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  tabIndex={-1}
-                                  aria-hidden="true"
-                                  className="relative block aspect-[16/9] overflow-hidden bg-[#050806] border-b border-[rgba(183,255,69,0.15)] group/img"
-                                >
-                                  {/* Corner tick marks */}
-                                  <div className="absolute top-1.5 left-1.5 w-2 h-2 border-t border-l border-[#B7FF45] z-10" />
-                                  <div className="absolute top-1.5 right-1.5 w-2 h-2 border-t border-r border-[#B7FF45] z-10" />
-                                  <div className="absolute bottom-1.5 left-1.5 w-2 h-2 border-b border-l border-[#B7FF45] z-10" />
-                                  <div className="absolute bottom-1.5 right-1.5 w-2 h-2 border-b border-r border-[#B7FF45] z-10" />
+                            <article className="group flex w-full flex-col border border-[rgba(183,255,69,0.2)] bg-[#0C130F] transition-all duration-300 hover:border-[#B7FF45] hover:shadow-[0_0_24px_rgba(183,255,69,0.2)] hover:-translate-y-1 relative p-6 sm:p-7">
+                              {/* Category badge & stars */}
+                              <div className="flex flex-wrap items-center justify-between gap-3">
+                                <span className="px-2.5 py-1 bg-[#101812] border border-[#B7FF45]/30 text-[#B7FF45] font-mono text-[0.72rem] font-bold uppercase tracking-wider">
+                                  {project.category}
+                                </span>
+                                {project.stars !== undefined && project.stars > 0 && (
+                                  <span className="flex items-center gap-1 font-mono text-[0.72rem] text-[#B7FF45] bg-[#101812] px-2 py-0.5 border border-[#B7FF45]/20">
+                                    <span>★</span>
+                                    <span>{project.stars}</span>
+                                  </span>
+                                )}
+                              </div>
 
-                                  <img
-                                    src={previewImage}
-                                    alt={project.title}
-                                    className="w-full h-full object-cover object-top group-hover/img:scale-105 transition-transform duration-700 ease-out"
-                                    loading="lazy"
-                                  />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-[#0C130F] via-transparent to-transparent opacity-60" />
-                                  <span aria-hidden="true" className="shine-sweep" />
+                              <h4 className="mt-4 font-heading text-xl font-bold text-[#F5F8F4] group-hover:text-[#B7FF45] transition-colors">
+                                {project.title}
+                              </h4>
 
-                                  <span
-                                    aria-hidden="true"
-                                    className="pointer-events-none absolute bottom-3 left-3 z-[3] translate-y-2 bg-[#050806]/90 border border-[#B7FF45]/40 px-2.5 py-0.5 font-mono text-[0.68rem] font-bold uppercase tracking-wider text-[#B7FF45] opacity-0 transition-all duration-300 group-hover/img:translate-y-0 group-hover/img:opacity-100"
+                              <p className="mt-1 font-mono text-xs text-[#8CFF72]/80 leading-relaxed">
+                                {project.tags.join(" · ")}
+                              </p>
+
+                              <p className="mt-3.5 text-sm leading-relaxed text-[#AAB6AA]">
+                                {project.description}
+                              </p>
+
+                              {/* Action Links */}
+                              <div className="mt-auto pt-6 flex flex-wrap items-center justify-between gap-3 border-t border-white/5">
+                                {project.live ? (
+                                  <a
+                                    href={project.live}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="font-mono text-xs font-bold text-[#B7FF45] hover:text-[#F5F8F4] transition-colors flex items-center gap-1.5"
                                   >
-                                    {project.live ? "ACCESS LIVE SYSTEM ↗" : "OPEN REPOSITORY ↗"}
-                                  </span>
-                                </a>
-                              )}
+                                    <span>ACCESS LIVE</span>
+                                    <span className="arrow-nudge">↗</span>
+                                  </a>
+                                ) : (
+                                  <div className="flex items-center gap-2 font-mono text-[0.7rem] text-[#778379] tracking-wider uppercase">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#B7FF45]/70" />
+                                    <span>ACTIVE CODEBASE</span>
+                                  </div>
+                                )}
 
-                              <div className="flex flex-1 flex-col p-6 sm:p-7">
-                                {/* Category badge & stars */}
-                                <div className="flex flex-wrap items-center justify-between gap-3">
-                                  <span className="px-2.5 py-1 bg-[#101812] border border-[#B7FF45]/30 text-[#B7FF45] font-mono text-[0.72rem] font-bold uppercase tracking-wider">
-                                    {project.category}
-                                  </span>
-                                  {project.stars !== undefined && project.stars > 0 && (
-                                    <span className="flex items-center gap-1 font-mono text-[0.72rem] text-[#B7FF45] bg-[#101812] px-2 py-0.5 border border-[#B7FF45]/20">
-                                      <span>★</span>
-                                      <span>{project.stars}</span>
-                                    </span>
-                                  )}
-                                </div>
-
-                                <h4 className="mt-4 font-heading text-xl font-bold text-[#F5F8F4] group-hover:text-[#B7FF45] transition-colors">
-                                  {project.title}
-                                </h4>
-
-                                <p className="mt-1 font-mono text-xs text-[#8CFF72]/80 leading-relaxed">
-                                  {project.tags.join(" · ")}
-                                </p>
-
-                                <p className="mt-3.5 text-sm leading-relaxed text-[#AAB6AA]">
-                                  {project.description}
-                                </p>
-
-                                {/* Action Links */}
-                                <div className="mt-auto pt-6 flex flex-wrap items-center justify-between gap-3 border-t border-white/5">
-                                  {project.live ? (
-                                    <a
-                                      href={project.live}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="font-mono text-xs font-bold text-[#B7FF45] hover:text-[#F5F8F4] transition-colors flex items-center gap-1.5"
-                                    >
-                                      <span>ACCESS LIVE SYSTEM</span>
-                                      <span className="arrow-nudge">↗</span>
-                                    </a>
-                                  ) : (
-                                    <div className="flex items-center gap-2 font-mono text-[0.7rem] text-[#778379] tracking-wider uppercase">
-                                      <span className="w-1.5 h-1.5 rounded-full bg-[#B7FF45]/70" />
-                                      <span>ACTIVE CODEBASE</span>
-                                    </div>
-                                  )}
-
-                                  {project.github && (
-                                    <a
-                                      href={project.github}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      aria-label={`${project.title} on GitHub`}
-                                      className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#101812] border border-[rgba(183,255,69,0.25)] hover:border-[#B7FF45] font-mono text-xs font-bold text-[#AAB6AA] hover:text-[#B7FF45] hover:shadow-[0_0_12px_rgba(183,255,69,0.2)] transition-all"
-                                    >
-                                      <GitHubIcon />
-                                      <span>GITHUB</span>
-                                      <span className="arrow-nudge">↗</span>
-                                    </a>
-                                  )}
-                                </div>
+                                {project.github && (
+                                  <a
+                                    href={project.github}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label={`${project.title} on GitHub`}
+                                    className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#101812] border border-[rgba(183,255,69,0.25)] hover:border-[#B7FF45] font-mono text-xs font-bold text-[#AAB6AA] hover:text-[#B7FF45] hover:shadow-[0_0_12px_rgba(183,255,69,0.2)] transition-all"
+                                  >
+                                    <GitHubIcon />
+                                    <span>GITHUB</span>
+                                    <span className="arrow-nudge">↗</span>
+                                  </a>
+                                )}
                               </div>
                             </article>
                           </motion.div>

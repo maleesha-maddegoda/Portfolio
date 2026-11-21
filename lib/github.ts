@@ -273,7 +273,6 @@ export async function fetchGitHubProjects(): Promise<MinorProject[]> {
         category,
         github: repo.html_url,
         live,
-        imageUrl: `https://opengraph.githubassets.com/1/${repo.full_name}`,
         stars: repo.stargazers_count,
         updatedAt: repo.pushed_at,
         isFork: repo.fork,
