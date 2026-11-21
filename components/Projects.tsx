@@ -205,7 +205,7 @@ export default function Projects({
                           aria-hidden="true"
                           className="pointer-events-none absolute bottom-4 left-4 z-[3] translate-y-2 bg-[#050806]/90 border border-[#B7FF45]/40 px-3 py-1 font-mono text-[0.72rem] font-bold uppercase tracking-wider text-[#B7FF45] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
                         >
-                          {project.live ? "ACCESS LIVE SYSTEM" : "INSPECT SOURCE"} <span className="arrow-nudge">↗</span>
+                          {project.live ? "ACCESS LIVE SYSTEM" : "VIEW GITHUB REPOSITORY"} <span className="arrow-nudge">↗</span>
                         </span>
                       </div>
                     </a>
@@ -331,6 +331,12 @@ export default function Projects({
                     <AnimatePresence mode="popLayout">
                       {filteredProjects.map((project) => {
                         const primary = project.live ?? project.github;
+                        const previewImage =
+                          project.imageUrl ||
+                          (project.github
+                            ? `https://opengraph.githubassets.com/1/${project.github.replace("https://github.com/", "")}`
+                            : undefined);
+
                         return (
                           <motion.div
                             layout
@@ -342,22 +348,37 @@ export default function Projects({
                             className="flex"
                           >
                             <article className="group flex w-full flex-col border border-[rgba(183,255,69,0.2)] bg-[#0C130F] transition-all duration-300 hover:border-[#B7FF45] hover:shadow-[0_0_24px_rgba(183,255,69,0.2)] hover:-translate-y-1 relative">
-                              {/* Full screenshot if available */}
-                              {project.imageUrl && (
+                              {/* Topic UI Image Banner */}
+                              {previewImage && (
                                 <a
                                   href={primary}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   tabIndex={-1}
                                   aria-hidden="true"
-                                  className="relative block aspect-video overflow-hidden bg-[#050806] border-b border-[rgba(183,255,69,0.15)]"
+                                  className="relative block aspect-[16/9] overflow-hidden bg-[#050806] border-b border-[rgba(183,255,69,0.15)] group/img"
                                 >
+                                  {/* Corner tick marks */}
+                                  <div className="absolute top-1.5 left-1.5 w-2 h-2 border-t border-l border-[#B7FF45] z-10" />
+                                  <div className="absolute top-1.5 right-1.5 w-2 h-2 border-t border-r border-[#B7FF45] z-10" />
+                                  <div className="absolute bottom-1.5 left-1.5 w-2 h-2 border-b border-l border-[#B7FF45] z-10" />
+                                  <div className="absolute bottom-1.5 right-1.5 w-2 h-2 border-b border-r border-[#B7FF45] z-10" />
+
                                   <img
-                                    src={project.imageUrl}
-                                    alt=""
-                                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 ease-out"
+                                    src={previewImage}
+                                    alt={project.title}
+                                    className="w-full h-full object-cover object-top group-hover/img:scale-105 transition-transform duration-700 ease-out"
+                                    loading="lazy"
                                   />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-[#0C130F] via-transparent to-transparent opacity-60" />
                                   <span aria-hidden="true" className="shine-sweep" />
+
+                                  <span
+                                    aria-hidden="true"
+                                    className="pointer-events-none absolute bottom-3 left-3 z-[3] translate-y-2 bg-[#050806]/90 border border-[#B7FF45]/40 px-2.5 py-0.5 font-mono text-[0.68rem] font-bold uppercase tracking-wider text-[#B7FF45] opacity-0 transition-all duration-300 group-hover/img:translate-y-0 group-hover/img:opacity-100"
+                                  >
+                                    {project.live ? "ACCESS LIVE SYSTEM ↗" : "OPEN REPOSITORY ↗"}
+                                  </span>
                                 </a>
                               )}
 
@@ -387,26 +408,34 @@ export default function Projects({
                                   {project.description}
                                 </p>
 
-                                {/* Telemetry Links */}
-                                <div className="mt-auto pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-white/5">
-                                  <a
-                                    href={primary}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="font-mono text-xs font-bold text-[#B7FF45] hover:text-[#F5F8F4] transition-colors flex items-center gap-1.5"
-                                  >
-                                    <span>{project.live ? "ACCESS LIVE" : "INSPECT CODE"}</span>
-                                    <span className="arrow-nudge">↗</span>
-                                  </a>
+                                {/* Action Links */}
+                                <div className="mt-auto pt-6 flex flex-wrap items-center justify-between gap-3 border-t border-white/5">
+                                  {project.live ? (
+                                    <a
+                                      href={project.live}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="font-mono text-xs font-bold text-[#B7FF45] hover:text-[#F5F8F4] transition-colors flex items-center gap-1.5"
+                                    >
+                                      <span>ACCESS LIVE SYSTEM</span>
+                                      <span className="arrow-nudge">↗</span>
+                                    </a>
+                                  ) : (
+                                    <div className="flex items-center gap-2 font-mono text-[0.7rem] text-[#778379] tracking-wider uppercase">
+                                      <span className="w-1.5 h-1.5 rounded-full bg-[#B7FF45]/70" />
+                                      <span>ACTIVE CODEBASE</span>
+                                    </div>
+                                  )}
 
                                   {project.github && (
                                     <a
                                       href={project.github}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      aria-label={`${project.title} source code on GitHub`}
-                                      className="font-mono text-xs font-bold text-[#AAB6AA] hover:text-[#B7FF45] transition-colors flex items-center gap-1"
+                                      aria-label={`${project.title} on GitHub`}
+                                      className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#101812] border border-[rgba(183,255,69,0.25)] hover:border-[#B7FF45] font-mono text-xs font-bold text-[#AAB6AA] hover:text-[#B7FF45] hover:shadow-[0_0_12px_rgba(183,255,69,0.2)] transition-all"
                                     >
+                                      <GitHubIcon />
                                       <span>GITHUB</span>
                                       <span className="arrow-nudge">↗</span>
                                     </a>
