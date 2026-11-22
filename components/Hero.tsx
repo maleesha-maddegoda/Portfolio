@@ -14,8 +14,9 @@ const buildSequence = (phrases: string[]) => {
 };
 
 const TECH = [
-  "Python", "PyTorch", "TensorFlow", "React", "Next.js", 
-  "Node.js", "OpenCV", "Scikit-Learn", "FastAPI", "MongoDB", "PostgreSQL"
+  "Python", "PyTorch", "TensorFlow", "OpenCV", "YOLOv8",
+  "React", "Next.js", "React Native", "FastAPI", "Node.js",
+  "PostgreSQL", "Supabase", "Redis", "MongoDB", "Docker"
 ];
 
 export default function Hero() {

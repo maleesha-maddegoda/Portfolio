@@ -6,7 +6,7 @@
 
 export const personalInfo = {
   name: "Maleesha Maddegoda",
-  title: "AI & ML Engineer | Full-Stack Developer",
+  title: "AI & ML Engineering | Computer Vision | Full-Stack Development",
   university: "SLIIT",
   degree: "B.Sc. (Hons) in Information Technology",
   specialization: "Artificial Intelligence",
@@ -18,14 +18,13 @@ export const personalInfo = {
   whatsappNumber: "+94 77 123 4567",
   whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "",
   resumeLink: "/Resume.pdf",
-  bio: "Hello! My name is Maleesha. I'm pursuing a B.Sc. (Hons) in Information Technology at SLIIT, specializing in Artificial Intelligence. I architect intelligent, data-driven systems where machine learning models meet robust full-stack software craftsmanship. Specializing in computer vision, neural architectures, and scalable web solutions.",
-  heroBio:
-    "Third-year SLIIT undergraduate specializing in Artificial Intelligence. I build deep learning architectures, computer vision pipelines, and production-grade full-stack web applications using PyTorch, Next.js, FastAPI, and TypeScript. Seeking an AI / Machine Learning Internship.",
+  bio: "Third-year BSc (Hons) Information Technology undergraduate at SLIIT, specialising in Artificial Intelligence (expected 2028). Focused on building practical machine-learning solutions and AI-enabled applications, with project experience in computer vision, climate-data analysis, multilingual LLM integration and full-stack development. Interested in an opportunity in AI/ML engineering or software development.",
+  heroBio: "Third-year BSc (Hons) Information Technology undergraduate at SLIIT, specialising in Artificial Intelligence (expected 2028). Focused on building practical machine-learning solutions and AI-enabled applications, with project experience in computer vision, climate-data analysis, multilingual LLM integration and full-stack development.",
   typewriterPhrases: [
-    "I build deep learning architectures.",
+    "I engineer AI & Machine Learning solutions.",
     "I develop computer vision pipelines.",
-    "I build full-stack web solutions.",
-    "I train neural networks.",
+    "I analyze climate & geospatial trends.",
+    "I build practical full-stack applications.",
   ],
 };
 
@@ -70,6 +69,9 @@ import {
   SiCplusplus,
   SiHuggingface,
   SiLangchain,
+  SiSupabase,
+  SiRedis,
+  SiExpo,
 } from "react-icons/si";
 import { FaJava, FaDatabase } from "react-icons/fa";
 import { VscVscode } from "react-icons/vsc";
@@ -114,6 +116,7 @@ export const skills: SkillCategory[] = [
       { name: "PyTorch", Icon: SiPytorch, brandColor: "#EE4C2C", darkBrandColor: "#f76e52", bgColor: "rgba(238, 76, 44, 0.12)", hoverGlow: "rgba(238, 76, 44, 0.35)" },
       { name: "TensorFlow", Icon: SiTensorflow, brandColor: "#FF6F00", darkBrandColor: "#ff9033", bgColor: "rgba(255, 111, 0, 0.12)", hoverGlow: "rgba(255, 111, 0, 0.35)" },
       { name: "OpenCV", Icon: SiOpencv, brandColor: "#5C3EE8", darkBrandColor: "#846cf0", bgColor: "rgba(92, 62, 232, 0.12)", hoverGlow: "rgba(92, 62, 232, 0.35)" },
+      { name: "YOLOv8", Icon: SiOpencv, brandColor: "#00FFFF", darkBrandColor: "#55ffff", bgColor: "rgba(0, 255, 255, 0.12)", hoverGlow: "rgba(0, 255, 255, 0.35)" },
       { name: "Scikit-Learn", Icon: SiScikitlearn, brandColor: "#F7931E", darkBrandColor: "#f9aa4f", bgColor: "rgba(247, 147, 30, 0.12)", hoverGlow: "rgba(247, 147, 30, 0.35)" },
       { name: "Hugging Face", Icon: SiHuggingface, brandColor: "#FFD21E", darkBrandColor: "#ffe169", bgColor: "rgba(255, 210, 30, 0.12)", hoverGlow: "rgba(255, 210, 30, 0.35)" },
       { name: "LangChain", Icon: SiLangchain, brandColor: "#1C3C3C", darkBrandColor: "#489999", bgColor: "rgba(28, 60, 60, 0.15)", hoverGlow: "rgba(72, 153, 153, 0.40)" },
@@ -144,6 +147,8 @@ export const skills: SkillCategory[] = [
       { name: "PostgreSQL", Icon: SiPostgresql, brandColor: "#4169E1", darkBrandColor: "#6b8df2", bgColor: "rgba(65, 105, 225, 0.12)", hoverGlow: "rgba(65, 105, 225, 0.35)" },
       { name: "MySQL", Icon: SiMysql, brandColor: "#4479A1", darkBrandColor: "#6ea0c7", bgColor: "rgba(68, 121, 161, 0.12)", hoverGlow: "rgba(68, 121, 161, 0.35)" },
       { name: "MongoDB", Icon: SiMongodb, brandColor: "#47A248", darkBrandColor: "#68be69", bgColor: "rgba(71, 162, 72, 0.12)", hoverGlow: "rgba(71, 162, 72, 0.35)" },
+      { name: "Supabase", Icon: SiSupabase, brandColor: "#3ECF8E", darkBrandColor: "#5ef3ab", bgColor: "rgba(62, 207, 142, 0.12)", hoverGlow: "rgba(62, 207, 142, 0.35)" },
+      { name: "Redis", Icon: SiRedis, brandColor: "#DC382D", darkBrandColor: "#f35b52", bgColor: "rgba(220, 56, 45, 0.12)", hoverGlow: "rgba(220, 56, 45, 0.35)" },
       { name: "SQLite", Icon: FaDatabase, brandColor: "#003B57", darkBrandColor: "#4590b5", bgColor: "rgba(0, 59, 87, 0.12)", hoverGlow: "rgba(69, 144, 181, 0.35)" },
     ],
   },
@@ -204,37 +209,37 @@ export interface MinorProject {
 
 export const minorProjects: MinorProject[] = [
   {
-    title: "Serenity AI Companion",
+    title: "AgriNova AI",
     description:
-      "An empathetic, trilingual AI voice and text companion providing emotional support in English, Sinhala, and Tamil. Powered by Google Gemini with speech analysis.",
-    tags: ["Google Gemini", "JavaScript", "NLP", "Speech Synthesis", "Trilingual AI"],
-    category: "AI / ML",
-    github: "https://github.com/maleesha-maddegoda/serenity-ai-companion",
-    stars: 0,
-  },
-  {
-    title: "Earth Scope",
-    description:
-      "Worldwide Earth-science trend analysis platform powered by real NASA POWER satellite data, rigorous statistical tests (OLS, Mann-Kendall, FDR), and Google Gemini AI.",
-    tags: ["Python", "NASA POWER API", "Google Gemini AI", "Statistics", "Machine Learning"],
-    category: "AI / ML",
-    github: "https://github.com/maleesha-maddegoda/Earth-Scope",
-    stars: 0,
-  },
-  {
-    title: "Agrinova AI",
-    description:
-      "AI-powered crop disease early warning system featuring EfficientNet leaf diagnosis, HSV severity estimation, trilingual farmer advisory (Sinhala, Tamil, English), regional outbreak surveillance, and an Agriculture Officer triage dashboard.",
-    tags: ["EfficientNet", "Computer Vision", "Deep Learning", "JavaScript", "HSV Analysis"],
+      "Designed an agricultural health platform combining EfficientNet-B0 crop-leaf disease classification with OpenCV/HSV lesion-severity estimation. The platform also incorporates multilingual AI advisory and geospatial outbreak monitoring.",
+    tags: ["PyTorch", "FastAPI", "React", "OpenCV", "Google Gemini", "Supabase", "PostgreSQL"],
     category: "AI / ML",
     github: "https://github.com/maleesha-maddegoda/agrinova-ai",
     stars: 0,
   },
   {
+    title: "Earth Scope",
+    description:
+      "Built a web-based Earth-science analytics platform using NASA POWER and MERRA-2 datasets. Its analysis includes spatial methods and statistical trend testing such as OLS and Mann–Kendall with multiple-testing correction.",
+    tags: ["Python", "FastAPI", "React", "PostgreSQL", "Redis", "Docker"],
+    category: "AI / ML",
+    github: "https://github.com/maleesha-maddegoda/Earth-Scope",
+    stars: 0,
+  },
+  {
+    title: "Serenity AI Companion",
+    description:
+      "Developed an empathetic AI companion supporting English, Sinhala and Tamil. Features include voice and text interaction, emotion-aware responses and a session-based mood journal.",
+    tags: ["React", "Node.js", "Express", "Google Gemini", "Web Audio API"],
+    category: "AI / ML",
+    github: "https://github.com/maleesha-maddegoda/serenity-ai-companion",
+    stars: 0,
+  },
+  {
     title: "Legal Mind AI",
     description:
-      "An intelligent legal intelligence platform powered by Google Gemini and FastAPI for contract risk scoring, automated summarization, deadline extraction, and interactive legal AI chat.",
-    tags: ["FastAPI", "Google Gemini", "Python", "Contract Analysis", "Fullstack"],
+      "Created a legal-document analysis application for clause-risk assessment, document summarisation and deadline extraction, with Google Calendar synchronisation.",
+    tags: ["React", "FastAPI", "Google Gemini", "MySQL", "Google Calendar API"],
     category: "Fullstack",
     github: "https://github.com/maleesha-maddegoda/legal-mind-ai",
     stars: 0,
@@ -242,8 +247,8 @@ export const minorProjects: MinorProject[] = [
   {
     title: "Intermission Cinema App",
     description:
-      "A full-stack cinema management and ticket booking application built with React Native (Expo), Node.js, Express, and MongoDB.",
-    tags: ["React Native", "Expo", "Node.js", "Express", "MongoDB"],
+      "Built a cross-platform cinema booking system with customer reservations, seat selection, movie and showtime management, and an administrative workflow.",
+    tags: ["React Native", "Expo", "Node.js", "Express", "MongoDB", "JWT"],
     category: "Mobile App",
     github: "https://github.com/maleesha-maddegoda/intermission-cinema-app",
     stars: 0,
@@ -278,14 +283,14 @@ export const experience: ExperienceItem[] = [
     period: "Seeking · 2026",
     type: "seeking",
     description:
-      "Actively seeking an internship opportunity where I can contribute to production-grade artificial intelligence, computer vision, or full-stack software development teams. Ready to deliver impact from day one.",
+      "Actively seeking an opportunity in AI/ML engineering or software development where I can contribute to production-grade artificial intelligence, computer vision, or full-stack software development teams. Ready to deliver impact from day one.",
     bullets: [
-      "Rigorous background in neural architectures, computer vision, and deep learning",
-      "Hands-on expertise training and optimizing PyTorch and TensorFlow models",
-      "Proficient in modern full-stack engineering with Next.js, FastAPI, and TypeScript",
-      "Disciplined version control, automated testing, and clean software architecture",
+      "Computer vision & crop health: image-based disease classification (EfficientNet-B0) and visual lesion-severity estimation",
+      "Climate & geospatial analytics: NASA POWER/MERRA-2 datasets, spatial methods, and statistical trend testing (OLS, Mann–Kendall)",
+      "Multilingual conversational AI: English, Sinhala, and Tamil voice/text interaction with emotion-aware responses (Google Gemini)",
+      "Document intelligence & full-stack systems: contract risk scoring, automated summarisation, deadline extraction, and administrative workflows",
     ],
-    tags: ["Artificial Intelligence", "Machine Learning", "Computer Vision", "Full-Stack"],
+    tags: ["Artificial Intelligence", "Computer Vision", "Machine Learning", "Full-Stack Development"],
   },
 ];
 
@@ -422,5 +427,38 @@ export const achievements: Achievement[] = [
     description:
       "Honored for active role, positive technical contribution, and collaborative problem solving with team 'Zero Day' in the CodeAréna'26 hackathon and competitive coding arena.",
     certificate: "/achievements/codearena.jpg",
+  },
+];
+
+
+// ─── TECHNICAL FOCUS & APPLIED AREAS (FROM CV) ─────────────
+export const technicalFocus = [
+  "Computer vision and image-based classification",
+  "Machine-learning model development and evaluation",
+  "Climate and geospatial data analysis",
+  "Multilingual AI assistants and LLM integration",
+  "End-to-end web and mobile application development",
+];
+
+export const appliedProjectAreas = [
+  {
+    area: "Computer Vision & Crop Health",
+    description: "Image-based disease classification, visual severity estimation and geospatial outbreak monitoring.",
+  },
+  {
+    area: "Climate & Geospatial Analytics",
+    description: "Environmental datasets, spatial analysis and statistical trend testing.",
+  },
+  {
+    area: "Multilingual Conversational AI",
+    description: "English, Sinhala and Tamil voice/text interaction with emotion-aware responses.",
+  },
+  {
+    area: "Document Intelligence",
+    description: "Contract clause-risk assessment, document summarisation and deadline extraction.",
+  },
+  {
+    area: "Full-Stack Booking Systems",
+    description: "Customer reservations, seat selection, showtime management and administrative workflows.",
   },
 ];
